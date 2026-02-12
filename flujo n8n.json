@@ -1,0 +1,134 @@
+{
+  "name": "Textos dionamicos en Storyline",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $json.query.id_sheet }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $json.query.sheet_name }}",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -144,
+        -80
+      ],
+      "id": "6afd4ebb-dc3b-4cc5-8fce-80569c92d629",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "65vCsfZBdPAUORbv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b25f6b41-7edd-4c41-afb0-6bd3b0ac6851",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -368,
+        -80
+      ],
+      "id": "56d794bb-0e98-4ad3-b7be-d219511045f9",
+      "name": "Webhook SL",
+      "webhookId": "b25f6b41-7edd-4c41-afb0-6bd3b0ac6851"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst resultado = {};\n\nitems.forEach(item => {\n  const scene = item.json.SCENE;\n  const slide = item.json.SLIDE;\n  const nText = item.json['N TEXT'];\n  const text = item.json.TEXT;\n  \n  // Crear estructura anidada\n  if (!resultado[scene]) {\n    resultado[scene] = {};\n  }\n  \n  if (!resultado[scene][slide]) {\n    resultado[scene][slide] = {};\n  }\n  \n  resultado[scene][slide][nText] = text;\n});\n\n// Retornar como un solo item\nreturn [{ json: resultado }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        112,
+        -80
+      ],
+      "id": "e509f55b-ca69-43b4-a8ed-1d812192a322",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "height": 368,
+        "width": 816
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "374f2532-eb83-477e-9162-a73ea012f8b8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "https://docs.google.com/spreadsheets/d/15uuLoMf0lxxnGd1drXHbyWHDpjqS7dMY7S8Lyd932SM/edit?gid=0#gid=0",
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -512,
+        -496
+      ],
+      "typeVersion": 1,
+      "id": "54d21872-e0a9-4d4f-b686-46550891f80a",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook SL": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "errorWorkflow": "qTb8VhKMdGTIKecj"
+  },
+  "versionId": "6680b167-03fc-45d6-bb8c-53564d0d29e9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2628fcedb0b1e527fd4e8aec8e3d8725288de7cae0cc925b6d413026e2ef90fe"
+  },
+  "id": "qTb8VhKMdGTIKecj",
+  "tags": []
+}
